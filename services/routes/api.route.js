@@ -1,28 +1,6 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const app = express();
-const port = 3002;
-
-const mongoDBAtlasUrl =
-  "mongodb+srv://yenak26:<Mypassword..>@cluster0.p6npxtq.mongodb.net/";
-
-mongoose
-  .connect(mongoDBAtlasUrl)
-  .then(() => console.log("Connected to MongoDB atlas!!!!!"))
-  .catch((err) => console.error("Error connecting to MongoDB atlas:", err));
-
-const authorSchema = new mongoose.Schema({
-  nome: String,
-  cognome: String,
-  email: String,
-  dataDiNascita: String,
-  avatar: String,
-});
-
-const Author = mongoose.model("Author", authorSchema);
-app.use(express.json());
-
-const authorRouter = express.Router();
+const { Router } = require("express");
+const Author = require("../models/author.model");
+const authorRouter = Router();
 
 authorRouter.get("/", async (req, res) => {
   try {
@@ -86,8 +64,4 @@ authorRouter.delete("/:id", async (req, res) => {
   }
 });
 
-app.use("/authors", authorRouter);
-
-app.listen(port, () => {
-  console.log(`server listening on port ${port}`);
-});
+module.exports = authorRouter;
