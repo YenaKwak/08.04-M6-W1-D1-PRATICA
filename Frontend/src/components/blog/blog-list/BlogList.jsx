@@ -9,14 +9,19 @@ const BlogList = () => {
     const fetchPosts = async () => {
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_API_URL}/authors`
+          `${process.env.REACT_APP_API_URL}/api/blogPosts`
         );
-        if (!response.ok) {
-          throw new Error(`HTTP error ${response.status}`);
-        }
         const data = await response.json();
-        setPosts(data);
+        if (response.ok) {
+          // 로그로 불러온 데이터를 확인
+          console.log("Fetched data:", data);
+          setPosts(data);
+        } else {
+          // 오류 처리
+          console.error("Server response wasn't ok:", response);
+        }
       } catch (error) {
+        // 오류 로깅
         console.error("Error fetching posts", error);
       }
     };
@@ -26,17 +31,13 @@ const BlogList = () => {
 
   return (
     <Row>
-      {posts.map((post, i) => (
-        <Col
-          key={`item-${i}`}
-          md={4}
-          style={{
-            marginBottom: 50,
-          }}
-        >
-          <BlogItem key={post.title} {...post} />
-        </Col>
-      ))}
+      {posts.map((post) => {
+        return (
+          <Col key={post._id} md={4} style={{ marginBottom: 50 }}>
+            <BlogItem key={post._id} {...post} />
+          </Col>
+        );
+      })}
     </Row>
   );
 };

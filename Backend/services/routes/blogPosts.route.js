@@ -5,9 +5,10 @@ const BlogPost = require("../models/blogPost.model");
 router.get("/", async (req, res) => {
   try {
     const posts = await BlogPost.find();
+    console.log("Posts found:", posts);
     res.json(posts);
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching posts:", error);
     res.status(500).send("Server Error");
   }
 });
@@ -15,6 +16,7 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const post = await BlogPost.findById(req.params.id);
+    console.log("Fetched Post:", post);
     if (post) {
       res.send(post);
     } else {

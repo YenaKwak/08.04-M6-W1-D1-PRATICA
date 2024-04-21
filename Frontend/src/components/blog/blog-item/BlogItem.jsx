@@ -3,8 +3,15 @@ import { Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import BlogAuthor from "../blog-author/BlogAuthor";
 import "./styles.css";
+
 const BlogItem = (props) => {
   const { title, cover, author, _id } = props;
+  console.log("Received _id:", _id);
+  if (!_id) {
+    console.error("Invalid _id value:", _id);
+    return <div>Invalid blog post data</div>;
+  }
+
   return (
     <Link to={`/blog/${_id}`} className="blog-link">
       <Card className="blog-card">

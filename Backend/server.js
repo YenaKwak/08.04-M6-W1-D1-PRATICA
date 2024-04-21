@@ -4,8 +4,8 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const mongoose = require("mongoose");
-const apiRoutes = require("./services/routes/api.route");
 const port = process.env.PORT || 3002;
+const apiRoutes = require("./services/routes/api.route"); // 이름 변경
 const blogPostsRoutes = require("./services/routes/blogPosts.route");
 
 mongoose
@@ -15,8 +15,8 @@ mongoose
 
 app.use(cors());
 app.use(express.json());
-app.use("/authors", apiRoutes);
-app.use("/api/blogPosts", blogPostsRoutes);
+app.use("/api/authors", apiRoutes); // API 경로 변경
+app.use("/api/blogPosts", blogPostsRoutes); // API 경로 변경
 
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
