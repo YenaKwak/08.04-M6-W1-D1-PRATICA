@@ -1,5 +1,6 @@
 const { Router } = require("express");
 const Author = require("../models/author.model");
+const { upload } = require("../cloudinaryConfig"); // Multer configuration
 const authorRouter = Router();
 
 authorRouter.get("/", async (req, res) => {
@@ -63,5 +64,24 @@ authorRouter.delete("/:id", async (req, res) => {
     res.status(500).send(error);
   }
 });
+
+authorRouter.patch(
+  "/:authorId/avatar",
+  upload.single("avatar"),
+  async (req, res) => {
+    try {
+      const author = await Author.findById(req.params.authorId);
+      if (author) {
+        author.avatar = req.file.path;
+        await author.save();
+        res.status(200).send(author);
+      } else {
+        res.status(404).send("Author not found");
+      }
+    } catch (error) {
+      res.status(500).send(error);
+    }
+  }
+);
 
 module.exports = authorRouter;

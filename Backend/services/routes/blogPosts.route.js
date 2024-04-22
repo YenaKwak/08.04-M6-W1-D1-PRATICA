@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const { upload } = require("../cloudinaryConfig");
 const BlogPost = require("../models/blogPost.model");
 
 router.get("/", async (req, res) => {
@@ -74,6 +75,21 @@ router.delete("/:id", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send("Server Error");
+  }
+});
+
+router.patch("/:blogPostId/cover", upload.single("cover"), async (req, res) => {
+  try {
+    const blogPost = await BlogPost.findById(req.params.blogPostId);
+    if (blogPost) {
+      blogPost.cover = req.file.path;
+      await blogPost.save();
+      res.status(200).send(blogPost);
+    } else {
+      res.status(404).send("BlogPost not found");
+    }
+  } catch (error) {
+    res.status(500).send("Server Error", error);
   }
 });
 
