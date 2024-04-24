@@ -2,8 +2,9 @@ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const { cloudinary } = require("../../root/cloudinaryConfig");
-const { upload } = require("../../root/cloudinaryConfig");
+const { storage } = require("../../root/cloudinaryConfig");
 const BlogPost = require("../models/blogPost.model");
+const upload = multer({ storage: storage });
 
 router.get("/", async (req, res) => {
   try {
@@ -81,16 +82,19 @@ router.delete("/:id", async (req, res) => {
 });
 
 router.patch("/:blogPostId/cover", upload.single("cover"), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).send("No file uploaded");
+  }
+
   try {
     // Cloudinary에 이미지 업로드
-    const result = await cloudinary.uploader.upload(req.file);
-    console.log("Cloudinary Upload Success!:", result.secure_url);
+    const result = await cloudinary.uploader.upload(req.file.path);
+    console.log("Cloudinary Upload Success", result.secure_url);
+
     // 블로그 포스트의 cover 필드를 업데이트
     const post = await BlogPost.findByIdAndUpdate(
       req.params.blogPostId,
-      {
-        cover: result.secure_url,
-      },
+      { cover: result.secure_url },
       { new: true }
     );
 

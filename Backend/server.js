@@ -18,6 +18,7 @@ app.use(cors());
 app.use(express.json());
 app.use("/api/authors", apiRoutes); // API 경로 변경
 app.use("/api/blogPosts", blogPostsRoutes); // API 경로 변경
+app.use(parser);
 
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
