@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const Author = require("../models/author.model");
-const { upload } = require("../cloudinaryConfig"); // Multer configuration
+const parser = require("../middlewares/multer");
 const authorRouter = Router();
 
 authorRouter.get("/", async (req, res) => {
@@ -65,21 +65,53 @@ authorRouter.delete("/:id", async (req, res) => {
   }
 });
 
+// authorRouter.patch(
+//   "/:authorId/avatar",
+//   upload.single("avatar"),
+//   async (req, res) => {
+//     try {
+//       const author = await Author.findById(req.params.authorId);
+//       if (author) {
+//         author.avatar = req.file.path;
+//         await author.save();
+//         res.status(200).send(author);
+//       } else {
+//         res.status(404).send("Author not found");
+//       }
+//     } catch (error) {
+//       res.status(500).send(error);
+//     }
+//   }
+// );
+
+// module.exports = authorRouter;
+
 authorRouter.patch(
   "/:authorId/avatar",
-  upload.single("avatar"),
+  parser.single("avatar"),
   async (req, res) => {
     try {
-      const author = await Author.findById(req.params.authorId);
-      if (author) {
-        author.avatar = req.file.path;
-        await author.save();
-        res.status(200).send(author);
-      } else {
-        res.status(404).send("Author not found");
-      }
+      // 파일 업로드가 성공적으로 multer를 통해 처리되었는지 확인
+      if (!req.file) return res.status(400).send("No file uploaded.");
+
+      // Cloudinary에 이미지 업로드
+      const result = await cloudinary.uploader.upload(req.file.path);
+
+      // 작가 새 아바타 URL로 업데이트
+      const updatedAuthor = await Author.findByIdAndUpdate(
+        req.params.authorId,
+        {
+          avatar: result.secure_url,
+        },
+        { new: true }
+      );
+
+      res.json(updatedAuthor);
     } catch (error) {
-      res.status(500).send(error);
+      console.error(error);
+      res
+        .status(500)
+        .json({ message: "Avatar upload failed", error: error.message });
     }
   }
 );

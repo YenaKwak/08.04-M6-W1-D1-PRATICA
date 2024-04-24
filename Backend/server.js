@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 const port = process.env.PORT || 3002;
 const apiRoutes = require("./services/routes/api.route"); // 이름 변경
 const blogPostsRoutes = require("./services/routes/blogPosts.route");
+const { parser } = require("./root/cloudinaryConfig");
 
 mongoose
   .connect(process.env.MONGO_URL)

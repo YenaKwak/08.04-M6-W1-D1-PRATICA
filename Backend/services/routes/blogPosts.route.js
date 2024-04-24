@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const { upload } = require("../cloudinaryConfig");
+const multer = require("multer");
+const { cloudinary } = require("../../root/cloudinaryConfig");
+const { upload } = require("../../root/cloudinaryConfig");
 const BlogPost = require("../models/blogPost.model");
 
 router.get("/", async (req, res) => {
@@ -80,16 +82,27 @@ router.delete("/:id", async (req, res) => {
 
 router.patch("/:blogPostId/cover", upload.single("cover"), async (req, res) => {
   try {
-    const blogPost = await BlogPost.findById(req.params.blogPostId);
-    if (blogPost) {
-      blogPost.cover = req.file.path;
-      await blogPost.save();
-      res.status(200).send(blogPost);
-    } else {
-      res.status(404).send("BlogPost not found");
+    // Cloudinary에 이미지 업로드
+    const result = await cloudinary.uploader.upload(req.file);
+    console.log("Cloudinary Upload Success!:", result.secure_url);
+    // 블로그 포스트의 cover 필드를 업데이트
+    const post = await BlogPost.findByIdAndUpdate(
+      req.params.blogPostId,
+      {
+        cover: result.secure_url,
+      },
+      { new: true }
+    );
+
+    if (!post) {
+      return res.status(404).send("BlogPost not found");
     }
+
+    // 업데이트된 포스트 반환
+    res.json(post);
   } catch (error) {
-    res.status(500).send("Server Error", error);
+    console.error("Error uploading image to Cloudinary:", error);
+    res.status(500).send("Unable to upload image");
   }
 });
 
