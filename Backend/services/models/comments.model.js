@@ -1,7 +1,17 @@
-// const mongoose = require("mongoose");
+const mongoose = require("mongoose");
+const { Schema } = mongoose;
 
-// const commentsSchema = new mongoose.Schema({}, { timestamps: true });
+const commentSchema = new Schema({
+  postId: {
+    type: Schema.Types.ObjectId,
+    ref: "BlogPost",
+    required: true,
+  },
+  text: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
+});
 
-// const comment = mongoose.model("comment", commentsSchema);
+const Comment = mongoose.model("Comment", commentSchema);
 
-// module.exports = comment;
+module.exports = Comment;

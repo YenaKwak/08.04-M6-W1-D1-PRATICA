@@ -4,6 +4,7 @@ const multer = require("multer");
 const { cloudinary } = require("../../root/cloudinaryConfig");
 const { storage } = require("../../root/cloudinaryConfig");
 const BlogPost = require("../models/blogPost.model");
+const { parser } = require("../middlewares/multer"); //blogPosts/:id/cover 엔드포인트에서만 사용하도록
 const upload = multer({ storage: storage });
 
 router.get("/", async (req, res) => {
