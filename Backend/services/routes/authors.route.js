@@ -1,6 +1,8 @@
 const { Router } = require("express");
 const Author = require("../models/author.model");
+const { cloudinary } = require("../../root/cloudinaryConfig");
 const parser = require("../middlewares/multer");
+const multer = require("multer");
 const authorRouter = Router();
 
 authorRouter.get("/", async (req, res) => {
@@ -65,27 +67,6 @@ authorRouter.delete("/:id", async (req, res) => {
   }
 });
 
-// authorRouter.patch(
-//   "/:authorId/avatar",
-//   upload.single("avatar"),
-//   async (req, res) => {
-//     try {
-//       const author = await Author.findById(req.params.authorId);
-//       if (author) {
-//         author.avatar = req.file.path;
-//         await author.save();
-//         res.status(200).send(author);
-//       } else {
-//         res.status(404).send("Author not found");
-//       }
-//     } catch (error) {
-//       res.status(500).send(error);
-//     }
-//   }
-// );
-
-// module.exports = authorRouter;
-
 authorRouter.patch(
   "/:authorId/avatar",
   parser.single("avatar"),
@@ -105,6 +86,10 @@ authorRouter.patch(
         },
         { new: true }
       );
+      console.log("Updated Author:", updatedAuthor); // 결과 로그로 확인
+      if (!updatedAuthor) {
+        return res.status(404).send("Author not found");
+      }
 
       res.json(updatedAuthor);
     } catch (error) {
