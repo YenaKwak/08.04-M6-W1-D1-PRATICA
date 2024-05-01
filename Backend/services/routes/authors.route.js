@@ -71,32 +71,35 @@ authorRouter.patch(
   "/:authorId/avatar",
   parser.single("avatar"),
   async (req, res) => {
+    const { authorId } = req.params;
+    const author = await Author.findById(authorId);
+    if (!author) {
+      return status(404).send("Author not found");
+    }
+
+    if (!req.file) {
+      return res.status(400).send("No file uploaded.");
+    }
+
     try {
-      // 파일 업로드가 성공적으로 multer를 통해 처리되었는지 확인
-      if (!req.file) return res.status(400).send("No file uploaded.");
+      // Cloudinary에 이미지를 업로드합니다.
+      const result = await cloudinary.uploader.upload(req.file.path); // multer가 이미지를 임시 경로에 저장하고, 그 경로를 사용하여 업로드합니다.
 
-      // Cloudinary에 이미지 업로드
-      const result = await cloudinary.uploader.upload(req.file.path);
-
-      // 작가 새 아바타 URL로 업데이트
+      // 데이터베이스에서 해당 작가의 정보를 업데이트합니다.
       const updatedAuthor = await Author.findByIdAndUpdate(
         req.params.authorId,
-        {
-          avatar: result.secure_url,
-        },
+        { avatar: result.secure_url },
         { new: true }
       );
-      console.log("Updated Author:", updatedAuthor); // 결과 로그로 확인
+
       if (!updatedAuthor) {
         return res.status(404).send("Author not found");
       }
 
       res.json(updatedAuthor);
     } catch (error) {
-      console.error(error);
-      res
-        .status(500)
-        .json({ message: "Avatar upload failed", error: error.message });
+      console.error("Error uploading image to Cloudinary:", error);
+      res.status(500).send("Avatar upload failed");
     }
   }
 );
