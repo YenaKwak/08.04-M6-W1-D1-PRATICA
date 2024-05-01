@@ -1,6 +1,7 @@
 const express = require("express");
 const Comment = require("../models/comments.model");
 const BlogPost = require("../models/blogPost.model");
+const { authMiddleware } = require("../middlewares/authenticateToken");
 
 const commentRouter = express.Router();
 
@@ -36,22 +37,19 @@ commentRouter.get(
 );
 
 //특정 포스트에 댓글 추가
-commentRouter.post("/blogPosts/:id/comments", async (req, res) => {
+router.post("/:id/comment", authMiddleware, async (req, res) => {
   try {
+    const { comment } = req.body;
     const post = await BlogPost.findById(req.params.id);
     if (!post) {
-      return res.status(404).send("Blog post not found");
+      return res.status(404).json({ message: "Post not found" });
     }
-
-    const newComment = new Comment({
-      postId: req.params.id,
-      text: req.body.text,
-    });
-    await newComment.save();
-    res.status(201).json(newComment);
+    // 댓글 추가 로직 구현
+    post.comments.push({ text: comment, createdBy: req.user._id });
+    await post.save();
+    res.status(201).json(post);
   } catch (error) {
-    console.error("Error adding comment: ", error);
-    res.status(500).send("server error");
+    res.status(500).send("failed to add comment");
   }
 });
 

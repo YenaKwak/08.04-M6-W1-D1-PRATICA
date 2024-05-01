@@ -5,6 +5,7 @@ const { cloudinary } = require("../../root/cloudinaryConfig");
 const { storage } = require("../../root/cloudinaryConfig");
 const BlogPost = require("../models/blogPost.model");
 const { parser } = require("../middlewares/multer"); //blogPosts/:id/cover 엔드포인트에서만 사용하도록
+const { authMiddleware } = require("../middlewares/authenticateToken");
 const upload = multer({ storage: storage });
 
 router.get("/", async (req, res) => {
@@ -33,17 +34,20 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
-  if (!req.body.title || !req.body.content) {
-    return res.status(400).send("Title and content are required");
-  }
-  const post = new BlogPost(req.body);
+router.post("/", authMiddleware, async (req, res) => {
   try {
-    const newPost = await post.save();
-    res.status(201).send(newPost);
+    const { title, content, category } = req.body;
+    const newPost = await BlogPost({
+      title,
+      content,
+      category,
+      author: req.user._id,
+    });
+    await newPost.save();
+    res.statusMessage(201).json(newPost);
   } catch (error) {
     console.error(error);
-    res.status(500).send("Server error");
+    res.status(500).send("Failed to create post");
   }
 });
 
