@@ -35,7 +35,7 @@ export const verifyJWT = (token) => {
 export const authMiddleware = async (req, res, next) => {
   try {
     if (!req.headers.authorization) {
-      res.status(400).send("Login it");
+      res.status(400).send("Login required");
     } else {
       const decoded = await verifyJWT(
         req.headers.authorization.replace("Bearer ", "")
@@ -56,7 +56,7 @@ export const authMiddleware = async (req, res, next) => {
           res.status(401).send("User not found");
         }
       } else {
-        res.status(401).send("Log in again");
+        res.status(401).send("Please login again");
       }
     }
   } catch (err) {

@@ -3,6 +3,7 @@ const Author = require("../models/author.model");
 const { cloudinary } = require("../../root/cloudinaryConfig");
 const parser = require("../middlewares/multer");
 const multer = require("multer");
+const { hash } = require("bcryptjs");
 const authorRouter = Router();
 
 authorRouter.get("/", async (req, res) => {
@@ -28,8 +29,17 @@ authorRouter.get("/:id", async (req, res) => {
 });
 
 authorRouter.post("/", async (req, res) => {
+  //사용자등록과 함께 비밀번호 암호화로 변경
+  const { name, lastName, email, password, birthday } = req.body;
+  const hashedPassword = await bcrypt.hash(password, 10);
   try {
-    const newAuthor = new Author(req.body);
+    const newAuthor = new Author({
+      name,
+      lastName,
+      email,
+      password: hashedPassword,
+      birthday,
+    });
     const savedAuthor = await newAuthor.save();
     res.status(201).send(savedAuthor);
   } catch (error) {

@@ -1,10 +1,11 @@
-import { schema, model } from "mongoose";
+import { Schema, model } from "mongoose";
 
 const userSchema = new Schema(
   {
     username: {
       type: String,
       required: true,
+      unique: true,
     },
     password: {
       type: String,
@@ -16,5 +17,14 @@ const userSchema = new Schema(
     timestamps: true,
   }
 );
+
+userSchema.pre("save", async function (next) {
+  if (this.isModified("password") || this.isNew) {
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(this.password, salt);
+    this.password = hash;
+  }
+  next();
+});
 
 export default model("User", userSchema);
