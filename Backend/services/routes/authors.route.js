@@ -1,9 +1,10 @@
-const { Router } = require("express");
-const Author = require("../models/author.model");
-const { cloudinary } = require("../../root/cloudinaryConfig");
-const parser = require("../middlewares/multer");
-const multer = require("multer");
-const { hash } = require("bcryptjs");
+import { Router } from "express";
+import Author from "../models/author.model";
+import { cloudinary } from "../../root/cloudinaryConfig";
+import parser from "../middlewares/multer";
+import multer from "multer"; // multer를 import하여 파일 업로드를 처리
+import bcrypt from "bcryptjs"; // bcrypt를 import하여 비밀번호를 해시 처리
+
 const authorRouter = Router();
 
 authorRouter.get("/", async (req, res) => {
@@ -114,4 +115,4 @@ authorRouter.patch(
   }
 );
 
-module.exports = authorRouter;
+export default authorRouter;

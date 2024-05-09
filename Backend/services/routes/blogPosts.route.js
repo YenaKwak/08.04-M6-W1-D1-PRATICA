@@ -1,12 +1,13 @@
-const express = require("express");
+import express from "express";
+import { cloudinary } from "../../root/cloudinaryConfig";
+import { storage } from "../../root/cloudinaryConfig";
+import BlogPost from "../models/blogPost.model";
+import parser from "../middlewares/multer";
+import { authMiddleware } from "../middlewares/authenticateToken";
+import multer from "multer";
+
 const router = express.Router();
-const multer = require("multer");
-const { cloudinary } = require("../../root/cloudinaryConfig");
-const { storage } = require("../../root/cloudinaryConfig");
-const BlogPost = require("../models/blogPost.model");
-const { parser } = require("../middlewares/multer"); //blogPosts/:id/cover 엔드포인트에서만 사용하도록
-const { authMiddleware } = require("../middlewares/authenticateToken");
-const upload = multer({ storage: storage });
+const upload = multer({ storage });
 
 router.get("/", async (req, res) => {
   try {
@@ -115,4 +116,4 @@ router.patch("/:blogPostId/cover", upload.single("cover"), async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

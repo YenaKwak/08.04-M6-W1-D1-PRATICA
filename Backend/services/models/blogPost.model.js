@@ -1,4 +1,5 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
+const { Schema, model } = mongoose;
 
 const blogPostSchema = new mongoose.Schema(
   {
@@ -18,6 +19,6 @@ const blogPostSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const BlogPost = mongoose.model("BlogPost", blogPostSchema);
+const BlogPost = model("BlogPost", blogPostSchema);
 
-module.exports = BlogPost;
+export default BlogPost;

@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const { Schema } = mongoose;
+import mongoose from "mongoose";
+const { Schema, model } = mongoose;
 
 const commentSchema = new Schema({
   postId: {
@@ -12,6 +12,6 @@ const commentSchema = new Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 
-const Comment = mongoose.model("Comment", commentSchema);
+const Comment = model("Comment", commentSchema);
 
-module.exports = Comment;
+export default Comment;

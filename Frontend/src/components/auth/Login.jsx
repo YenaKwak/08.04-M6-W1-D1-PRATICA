@@ -31,6 +31,10 @@ const Login = () => {
     }
   };
 
+  const handleGoogleLogin = () => {
+    window.location.href = "http://localhost:3002/auth/google";
+  };
+
   return (
     <div className="container">
       <h2>Login</h2>
@@ -65,6 +69,9 @@ const Login = () => {
           Login
         </button>
       </form>
+      <button onClick={handleGoogleLogin} className="btn btn-danger mt-3">
+        Login with Google
+      </button>
     </div>
   );
 };

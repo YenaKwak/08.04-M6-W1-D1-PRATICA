@@ -1,7 +1,11 @@
 import { Router } from "express";
 import bcrypt from "bcrypt";
 import User from "../models/user.model.js";
-import { authMiddleware } from "../middlewares/authenticateToken.js";
+import passport from "passport";
+import {
+  authMiddleware,
+  generateJWT,
+} from "../middlewares/authenticateToken.js";
 
 export const authRouter = Router();
 
@@ -16,13 +20,26 @@ authRouter.post("/login", async (req, res) => {
     if (!isMatch) {
       return res.status(401).send("Invalid password");
     }
-    const token = generateJWT({ userId: user.id });
+    const token = await generateJWT({ userId: user.id });
     res.json(token);
   } catch (err) {
-    res.status(500).send("Server error", error);
+    res.status(500).send("Server error" + error);
   }
 });
 
 authRouter.get("/me", authMiddleware, async (req, res) => {
   res.json(req.user);
 });
+
+authRouter.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile"] })
+);
+
+authRouter.get(
+  "/google/callback",
+  passport.authenticate("google", { failureRedirect: "/login" }),
+  (req, res) => {
+    res.redirect("/home?token=" + req.user.token);
+  }
+);

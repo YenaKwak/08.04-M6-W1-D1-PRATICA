@@ -1,6 +1,6 @@
-const multer = require("multer");
-const { storage } = require("../../root/cloudinaryConfig");
+import multer from "multer";
+import { storage } from "../../root/cloudinaryConfig";
 
 const parser = multer({ storage });
 
-module.exports = parser;
+export default parser;
