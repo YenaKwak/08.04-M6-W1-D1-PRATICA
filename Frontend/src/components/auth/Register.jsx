@@ -1,27 +1,55 @@
 import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import "./styles.css";
 
 const Register = () => {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const history = useHistory();
+  const [formData, setFormData] = useState({
+    name: "",
+    lastName: "",
+    email: "",
+    password: "",
+    birthday: "",
+  });
+  const navigate = useNavigate();
 
-  const handleRegister = async (e) => {
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // 등록 API 요청
     try {
       const response = await fetch("http://localhost:3002/api/authors", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username, email, password }),
+        body: JSON.stringify(formData),
       });
       const data = await response.json();
       if (data._id) {
-        alert("Registration successful");
-        history.push("/login"); // 등록 후 로그인 페이지로 이동
+        // 회원 가입 성공 후 토큰 생성 요청
+        const loginResponse = await fetch("http://localhost:3002/api/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+          }),
+        });
+        const loginData = await loginResponse.json();
+        if (loginData.accessToken) {
+          localStorage.setItem("accessToken", loginData.accessToken);
+          alert("Registration and login successful");
+          navigate("/"); // 메인 페이지로 리디렉션
+        } else {
+          alert(
+            "Registration successful, but login failed. Please login manually."
+          );
+          navigate("/login");
+        }
       } else {
         alert(data.message || "Registration failed");
       }
@@ -32,51 +60,49 @@ const Register = () => {
   };
 
   return (
-    <div className="container">
+    <div className="container c-register">
       <h2>Register</h2>
-      <form onSubmit={handleRegister}>
-        <div className="mb-3">
-          <label htmlFor="username" className="form-label">
-            Username
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="email" className="form-label">
-            Email address
-          </label>
-          <input
-            type="email"
-            className="form-control"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="password" className="form-label">
-            Password
-          </label>
-          <input
-            type="password"
-            className="form-control"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit" className="btn btn-primary">
-          Register
-        </button>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          placeholder="First Name"
+          required
+        />
+        <input
+          type="text"
+          name="lastName"
+          value={formData.lastName}
+          onChange={handleChange}
+          placeholder="Last Name"
+          required
+        />
+        <input
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          placeholder="Email"
+          required
+        />
+        <input
+          type="password"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+          placeholder="Password"
+          required
+        />
+        <input
+          type="date"
+          name="birthday"
+          value={formData.birthday}
+          onChange={handleChange}
+          required
+        />
+        <button type="submit">Register</button>
       </form>
     </div>
   );

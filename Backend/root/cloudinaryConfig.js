@@ -1,5 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
+import multer from "multer";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_NAME,
@@ -15,5 +16,6 @@ const storage = new CloudinaryStorage({
     format: async (req, file) => "png",
   },
 });
+const parser = multer({ storage });
 
-export { cloudinary, storage };
+export { cloudinary, storage, parser };

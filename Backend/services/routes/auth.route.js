@@ -10,20 +10,29 @@ import {
 export const authRouter = Router();
 
 authRouter.post("/login", async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
   try {
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ email });
     if (!user) {
-      return res.status(401).send("User not found");
+      return res
+        .status(401)
+        .json({ message: "Authentication failed. User not found." });
     }
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(401).send("Invalid password");
+      return res.status(401).json({ message: "Invalid credentials" });
     }
-    const token = await generateJWT({ userId: user.id });
-    res.json(token);
-  } catch (err) {
-    res.status(500).send("Server error" + error);
+
+    const token = jwt.sign(
+      { userId: user._id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+    res.json({ token });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 

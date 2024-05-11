@@ -1,7 +1,7 @@
 import express from "express";
-import Comment from "../models/comments.model";
-import BlogPost from "../models/blogPost.model";
-import { authMiddleware } from "../middlewares/authenticateToken";
+import Comment from "../models/comments.model.js";
+import BlogPost from "../models/blogPost.model.js";
+import { authMiddleware } from "../middlewares/authenticateToken.js";
 
 const commentRouter = express.Router();
 

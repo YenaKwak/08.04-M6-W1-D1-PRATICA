@@ -1,9 +1,9 @@
 import express from "express";
-import { cloudinary } from "../../root/cloudinaryConfig";
-import { storage } from "../../root/cloudinaryConfig";
-import BlogPost from "../models/blogPost.model";
-import parser from "../middlewares/multer";
-import { authMiddleware } from "../middlewares/authenticateToken";
+import { cloudinary } from "../../root/cloudinaryConfig.js";
+import { storage } from "../../root/cloudinaryConfig.js";
+import BlogPost from "../models/blogPost.model.js";
+import parser from "../middlewares/multer.js";
+import { authMiddleware } from "../middlewares/authenticateToken.js";
 import multer from "multer";
 
 const router = express.Router();

@@ -1,7 +1,7 @@
 import { Router } from "express";
-import Author from "../models/author.model";
-import { cloudinary } from "../../root/cloudinaryConfig";
-import parser from "../middlewares/multer";
+import Author from "../models/author.model.js";
+import { cloudinary } from "../../root/cloudinaryConfig.js";
+import parser from "../middlewares/multer.js";
 import multer from "multer"; // multer를 import하여 파일 업로드를 처리
 import bcrypt from "bcryptjs"; // bcrypt를 import하여 비밀번호를 해시 처리
 
