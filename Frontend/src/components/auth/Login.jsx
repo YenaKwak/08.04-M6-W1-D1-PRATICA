@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext.js";
 import "./styles.css";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -21,9 +23,10 @@ const Login = () => {
 
       const data = await response.json();
       if (data.token) {
-        localStorage.setItem("accessToken", data.token);
+        login(data.token);
+        // localStorage.setItem("accessToken", data.token);
         alert("Login successful");
-        navigate("/"); // 로그인 후 홈 페이지로 이동
+        navigate("/", { replace: true }); // 로그인 후 홈 페이지로 이동
       } else {
         alert(data.message || "Login failed");
       }

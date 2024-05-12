@@ -31,6 +31,8 @@ const NewBlogPost = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const token = localStorage.getItem("accessToken");
+    console.log("sending token:", token);
     try {
       const response = await fetch(
         `${process.env.REACT_APP_API_URL}/api/blogPosts`,
@@ -38,6 +40,7 @@ const NewBlogPost = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // 토큰을 헤더에 추가
           },
           body: JSON.stringify(form),
         }
