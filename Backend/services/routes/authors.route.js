@@ -3,6 +3,7 @@ import Author from "../models/author.model.js";
 import { cloudinary } from "../../root/cloudinaryConfig.js";
 import parser from "../middlewares/multer.js";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 const authorRouter = Router();
 
@@ -40,8 +41,20 @@ authorRouter.post("/register", async (req, res) => {
       password: hashedPassword,
       birthday,
     });
-    await newAuthor.save();
-    res.status(201).json({ message: "Author registered successfully" });
+
+    const savedAuthor = await newAuthor.save();
+
+    const token = jwt.sign(
+      { authorId: savedAuthor._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    res.status(200).json({
+      message: "Author registered successfully",
+      author: savedAuthor,
+      token,
+    });
   } catch (error) {
     console.error("Registration error:", error);
     res

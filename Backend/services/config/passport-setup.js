@@ -1,6 +1,6 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import Author from "../models/author.model.js"; // User 대신 Author 모델 사용
+import Author from "../models/author.model.js";
 import jwt from "jsonwebtoken";
 
 passport.use(
