@@ -17,13 +17,13 @@ mongoose
   .connect(process.env.MONGO_URL)
   .then(() => console.log("Connected to MongoDB Atlas!"))
   .catch((err) => console.error("Error connecting to MongoDB Atlas:", err));
-
+console.log("JWT Secret:", process.env.JWT_SECRET);
 app.use(cors());
 app.use(express.json());
 app.use(passportSetup.initialize());
 app.use("/api/authors", authorsRoute);
 app.use("/api/blogPosts", blogPostsRoutes);
-app.use("/auth", authRouter);
+app.use("/api/auth", authRouter);
 app.use("/api", commentRouter);
 
 app.listen(port, () => {

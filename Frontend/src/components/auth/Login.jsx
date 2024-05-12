@@ -10,16 +10,18 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3002/api/login", {
+      const response = await fetch("http://localhost:3002/api/auth/login", {
+        // URL 경로 수정
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
       });
+
       const data = await response.json();
-      if (data.accessToken) {
-        localStorage.setItem("accessToken", data.accessToken);
+      if (data.token) {
+        localStorage.setItem("accessToken", data.token);
         alert("Login successful");
         navigate("/"); // 로그인 후 홈 페이지로 이동
       } else {

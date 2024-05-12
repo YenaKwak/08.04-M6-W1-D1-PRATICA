@@ -2,8 +2,7 @@ import { Router } from "express";
 import Author from "../models/author.model.js";
 import { cloudinary } from "../../root/cloudinaryConfig.js";
 import parser from "../middlewares/multer.js";
-import multer from "multer"; // multer를 import하여 파일 업로드를 처리
-import bcrypt from "bcryptjs"; // bcrypt를 import하여 비밀번호를 해시 처리
+import bcrypt from "bcryptjs";
 
 const authorRouter = Router();
 
@@ -29,22 +28,25 @@ authorRouter.get("/:id", async (req, res) => {
   }
 });
 
-authorRouter.post("/", async (req, res) => {
-  //사용자등록과 함께 비밀번호 암호화로 변경
-  const { name, lastName, email, password, birthday } = req.body;
-  const hashedPassword = await bcrypt.hash(password, 10);
+authorRouter.post("/register", async (req, res) => {
+  const { name, lastName, username, email, password, birthday } = req.body;
   try {
+    const hashedPassword = await bcrypt.hash(password, 10);
     const newAuthor = new Author({
       name,
       lastName,
+      username,
       email,
       password: hashedPassword,
       birthday,
     });
-    const savedAuthor = await newAuthor.save();
-    res.status(201).send(savedAuthor);
+    await newAuthor.save();
+    res.status(201).json({ message: "Author registered successfully" });
   } catch (error) {
-    res.status(500).send(error);
+    console.error("Registration error:", error);
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.toString() });
   }
 });
 

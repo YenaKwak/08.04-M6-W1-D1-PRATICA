@@ -6,6 +6,7 @@ const Register = () => {
   const [formData, setFormData] = useState({
     name: "",
     lastName: "",
+    username: "",
     email: "",
     password: "",
     birthday: "",
@@ -19,37 +20,22 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3002/api/authors", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-      const data = await response.json();
-      if (data._id) {
-        // 회원 가입 성공 후 토큰 생성 요청
-        const loginResponse = await fetch("http://localhost:3002/api/login", {
+      const response = await fetch(
+        "http://localhost:3002/api/authors/register",
+        {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            email: formData.email,
-            password: formData.password,
-          }),
-        });
-        const loginData = await loginResponse.json();
-        if (loginData.accessToken) {
-          localStorage.setItem("accessToken", loginData.accessToken);
-          alert("Registration and login successful");
-          navigate("/"); // 메인 페이지로 리디렉션
-        } else {
-          alert(
-            "Registration successful, but login failed. Please login manually."
-          );
-          navigate("/login");
+          body: JSON.stringify(formData),
         }
+      );
+      const data = await response.json();
+      if (data.author) {
+        // 회원 가입 성공 후 토큰 생성 요청은 제거합니다.
+        // 로그인 페이지로 이동합니다.
+        alert("Registration successful. Please login manually.");
+        navigate("/login");
       } else {
         alert(data.message || "Registration failed");
       }
@@ -77,6 +63,14 @@ const Register = () => {
           value={formData.lastName}
           onChange={handleChange}
           placeholder="Last Name"
+          required
+        />
+        <input
+          tyep="text"
+          name="username"
+          value={formData.username}
+          onChange={handleChange}
+          placeholder="Username"
           required
         />
         <input

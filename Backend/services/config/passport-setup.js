@@ -1,6 +1,6 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import User from "../models/user.model.js";
+import Author from "../models/author.model.js"; // User 대신 Author 모델 사용
 import jwt from "jsonwebtoken";
 
 passport.use(
@@ -12,21 +12,25 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        let user = await User.findOne({ googleId: profile.id });
+        let author = await Author.findOne({ googleId: profile.id });
 
-        if (!user) {
-          user = new User({
+        if (!author) {
+          author = new Author({
             googleId: profile.id,
             username: profile.displayName,
             avatar: profile.photos[0].value,
           });
-          await user.save();
+          await author.save();
         }
 
-        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-          expiresIn: "1d",
-        });
-        done(null, { user, token });
+        const token = jwt.sign(
+          { authorId: author._id },
+          process.env.JWT_SECRET,
+          {
+            expiresIn: "1d",
+          }
+        );
+        done(null, { author, token });
       } catch (error) {
         done(error, null);
       }
