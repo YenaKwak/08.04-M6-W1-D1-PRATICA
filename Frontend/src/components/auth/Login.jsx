@@ -13,7 +13,6 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await fetch("http://localhost:3002/api/auth/login", {
-        // URL 경로 수정
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -24,9 +23,8 @@ const Login = () => {
       const data = await response.json();
       if (data.token) {
         login(data.token);
-        // localStorage.setItem("accessToken", data.token);
-        alert("Login successful");
-        navigate("/", { replace: true }); // 로그인 후 홈 페이지로 이동
+        alert("Login success");
+        navigate("/", { replace: true });
       } else {
         alert(data.message || "Login failed");
       }
@@ -34,6 +32,11 @@ const Login = () => {
       console.error("Login error:", error);
       alert("Login error");
     }
+  };
+
+  const handleGoogleLogin = () => {
+    // Google 로그인 페이지로 리다이렉트
+    window.location.href = "http://localhost:3002/api/auth/google/callback";
   };
 
   return (
@@ -68,6 +71,14 @@ const Login = () => {
         </div>
         <button type="submit" className="btn btn-primary">
           Login
+        </button>
+        <button
+          type="button"
+          onClick={handleGoogleLogin}
+          className="btn btn-danger"
+          style={{ marginLeft: "10px" }}
+        >
+          Login with Google
         </button>
       </form>
     </div>

@@ -18,13 +18,20 @@ mongoose
   .then(() => console.log("Connected to MongoDB Atlas!"))
   .catch((err) => console.error("Error connecting to MongoDB Atlas:", err));
 console.log("JWT Secret:", process.env.JWT_SECRET);
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000", // 클라이언트 주소
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 app.use(passportSetup.initialize());
 app.use("/api/authors", authorsRoute);
 app.use("/api/blogPosts", blogPostsRoutes);
 app.use("/api/auth", authRouter);
 app.use("/api", commentRouter);
+app.use(passport.initialize());
 
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);

@@ -43,13 +43,16 @@ authRouter.get("/me", authMiddleware, (req, res) => {
 
 authRouter.get(
   "/google",
-  passport.authenticate("google", { scope: ["profile"] })
+  passport.authenticate("google", { scope: ["profile", "email"] }) // 'scope'를 명확히 지정
 );
 
+// Gestisci il callback dopo l'autenticazione Google
 authRouter.get(
   "/google/callback",
   passport.authenticate("google", { failureRedirect: "/login" }),
   (req, res) => {
-    res.redirect("/home?token=" + req.user.token);
+    // Autenticazione riuscita, redirigi all'homepage o invia il token JWT
+    const token = req.user.token; // Assicurati che il token sia stato generato correttamente
+    res.redirect(`/home?token=${token}`); // Modifica secondo le tue necessità
   }
 );

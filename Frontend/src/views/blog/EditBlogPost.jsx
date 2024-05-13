@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Button, Container, Form } from "react-bootstrap";
 import { Editor } from "react-draft-wysiwyg";
-import { EditorState, convertToRaw } from "draft-js";
-import draftToHtml from "draftjs-to-html";
+import { EditorState } from "draft-js";
+
 import { useNavigate, useParams } from "react-router-dom";
 import "./styles.css";
 
