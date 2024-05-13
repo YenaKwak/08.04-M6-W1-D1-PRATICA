@@ -35,17 +35,19 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/", authMiddleware, async (req, res) => {
+router.post("/", authMiddleware, parser.single("cover"), async (req, res) => {
   try {
     const { title, content, category } = req.body;
+    const cover = req.file ? req.file.path : null; // 파일 처리
     const newPost = new BlogPost({
       title,
       content,
       category,
+      cover,
       author: req.user._id,
     });
     await newPost.save();
-    res.status(201).json(newPost); // Correct method to set status and send JSON
+    res.status(201).json(newPost);
   } catch (error) {
     console.error("Error creating post:", error);
     res.status(500).send("Failed to create post");
