@@ -38,16 +38,16 @@ router.get("/:id", async (req, res) => {
 router.post("/", authMiddleware, async (req, res) => {
   try {
     const { title, content, category } = req.body;
-    const newPost = await BlogPost({
+    const newPost = new BlogPost({
       title,
       content,
       category,
       author: req.user._id,
     });
     await newPost.save();
-    res.statusMessage(201).json(newPost);
+    res.status(201).json(newPost); // Correct method to set status and send JSON
   } catch (error) {
-    console.error(error);
+    console.error("Error creating post:", error);
     res.status(500).send("Failed to create post");
   }
 });

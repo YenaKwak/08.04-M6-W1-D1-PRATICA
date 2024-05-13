@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import User from "../models/user.model.js";
+import Author from "../models/author.model.js";
 
 export const generateJWT = (payload) => {
   //토큰생성하기
@@ -34,32 +34,31 @@ export const verifyJWT = (token) => {
 
 export const authMiddleware = async (req, res, next) => {
   try {
-    if (!req.headers.authorization) {
-      res.status(400).send("Login required");
-    } else {
-      const decoded = await verifyJWT(
-        req.headers.authorization.replace("Bearer ", "")
-      );
+    const authHeader = req.headers.authorization;
+    console.log("Received authorization header:", authHeader); // 로그 추가
 
-      if (decoded.exp) {
-        delete decoded.iat;
-        delete decoded.exp;
-
-        const me = await User.findOne({
-          ...decoded,
-        });
-
-        if (me) {
-          req.user = me;
-          next();
-        } else {
-          res.status(401).send("User not found");
-        }
-      } else {
-        res.status(401).send("Please login again");
-      }
+    if (!authHeader) {
+      return res.status(400).send("Login required");
     }
+
+    const token = authHeader.replace("Bearer ", ""); // 공백 포함하여 제거
+    const decoded = await verifyJWT(token);
+
+    if (!decoded) {
+      return res.status(401).send("Token is invalid");
+    }
+
+    const user = await Author.findById(decoded.authorId); // Author 모델 사용
+    console.log("Authenticated user:", user); // 로그 추가
+
+    if (!user) {
+      return res.status(401).send("User not found");
+    }
+
+    req.user = user;
+    next();
   } catch (err) {
-    next(err);
+    console.error("Error in authMiddleware:", err); // 오류 로그 추가
+    return res.status(500).send("Internal Server Error");
   }
 };
