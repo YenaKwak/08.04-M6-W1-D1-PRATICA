@@ -7,6 +7,7 @@ import NewBlogPost from "./views/new/New";
 import NotFound from "./views/notfound/NotFound"; //404페이지 컴포넌트 추가
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
+import EditBlogPost from "./views/blog/EditBlogPost";
 import {
   BrowserRouter as Router,
   Routes,
@@ -29,6 +30,10 @@ function App() {
           />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route
+            path="/edit/:id"
+            element={<PrivateRoute component={EditBlogPost} />}
+          />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Footer />

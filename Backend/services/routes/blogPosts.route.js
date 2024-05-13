@@ -20,11 +20,14 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", authMiddleware, async (req, res) => {
+  console.log("Request for post ID:", req.params.id); // ID 확인 로그 추가
+
   try {
-    const post = await BlogPost.findById(req.params.id);
+    const post = await BlogPost.findById(req.params.id).populate("author");
     console.log("Fetched Post:", post);
     if (post) {
+      console.log("Author ID:", post.author._id, "User ID:", req.user._id);
       res.send(post);
     } else {
       res.status(404).send("post not found");
