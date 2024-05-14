@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext.js";
 import "./styles.css";
@@ -8,6 +8,16 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const { login } = useAuth();
   const navigate = useNavigate();
+
+  // URL에서 토큰 추출 및 처리
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get("token");
+    if (token) {
+      login(token);
+      navigate("/", { replace: true });
+    }
+  }, [login, navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -23,6 +33,7 @@ const Login = () => {
       const data = await response.json();
       if (data.token) {
         login(data.token);
+        localStorage.setItem("accessToken", data.token); // Store token locally
         alert("Login success");
         navigate("/", { replace: true });
       } else {
@@ -35,8 +46,7 @@ const Login = () => {
   };
 
   const handleGoogleLogin = () => {
-    // Google 로그인 페이지로 리다이렉트
-    window.location.href = "http://localhost:3002/api/auth/google/callback";
+    window.location.href = "http://localhost:3002/api/auth/google";
   };
 
   return (
@@ -76,7 +86,6 @@ const Login = () => {
           type="button"
           onClick={handleGoogleLogin}
           className="btn btn-danger"
-          style={{ marginLeft: "10px" }}
         >
           Login with Google
         </button>

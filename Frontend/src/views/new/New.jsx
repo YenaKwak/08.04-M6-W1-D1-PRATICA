@@ -60,7 +60,7 @@ const NewBlogPost = () => {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
-            // 'Content-Type': 'multipart/form-data' should NOT be set manually
+            // Content-Type multipart/form-data should NOT be set manually
           },
           body: formData,
         }

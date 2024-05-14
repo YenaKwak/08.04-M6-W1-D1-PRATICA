@@ -9,28 +9,25 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: "http://localhost:3002/api/auth/google/callback",
-      scope: ["profile", "email"], // scope를 추가
+      scope: ["profile", "email"], // 'scope' 명시적으로 설정
     },
-
     async (accessToken, refreshToken, profile, done) => {
       try {
         let author = await Author.findOne({ googleId: profile.id });
-
         if (!author) {
           author = new Author({
             googleId: profile.id,
-            username: profile.displayName,
+            name: profile.displayName,
+            email: profile.emails[0].value,
             avatar: profile.photos[0].value,
+            username: profile.emails[0].value.split("@")[0],
           });
           await author.save();
         }
-
         const token = jwt.sign(
           { authorId: author._id },
           process.env.JWT_SECRET,
-          {
-            expiresIn: "1d",
-          }
+          { expiresIn: "1d" }
         );
         done(null, { author, token });
       } catch (error) {

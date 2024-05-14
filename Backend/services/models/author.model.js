@@ -4,13 +4,11 @@ const authorSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     surname: { type: String },
-    username: { type: String, required: true, unique: true },
+    username: { type: String, required: false }, // Make username not required
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true, select: false },
+    password: { type: String, required: false }, // Make password not required if using Google ID
     googleId: { type: String, unique: true, sparse: true },
-    birth: { type: String },
     avatar: { type: String },
-    bio: { type: String },
     role: { type: String, default: "user" },
   },
   { timestamps: true }
