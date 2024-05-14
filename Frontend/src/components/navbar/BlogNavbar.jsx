@@ -10,9 +10,12 @@ const NavBar = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    console.log("NavBar: Logging out"); // 로그 추가
     logout();
     navigate("/");
   };
+
+  console.log("NavBar: isAuthenticated:", isAuthenticated); // 로그 추가
 
   return (
     <Navbar expand="lg" className="blog-navbar" fixed="top">

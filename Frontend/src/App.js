@@ -4,7 +4,7 @@ import Footer from "./components/footer/Footer";
 import Home from "./views/home/Home";
 import Blog from "./views/blog/Blog";
 import NewBlogPost from "./views/new/New";
-import NotFound from "./views/notfound/NotFound"; //404페이지 컴포넌트 추가
+import NotFound from "./views/notfound/NotFound";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
 import EditBlogPost from "./views/blog/EditBlogPost";
@@ -43,8 +43,7 @@ function App() {
 }
 
 function PrivateRoute({ component: Component }) {
-  const { isAuthenticated } = useAuth(); // AuthContext에서 로그인 상태를 가져옵니다.
-
+  const { isAuthenticated } = useAuth();
   return isAuthenticated ? <Component /> : <Navigate to="/login" />;
 }
 

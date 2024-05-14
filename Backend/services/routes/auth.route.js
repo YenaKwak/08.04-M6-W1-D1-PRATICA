@@ -1,12 +1,9 @@
 import { Router } from "express";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken"; // jwt 모듈을 import합니다.
+import jwt from "jsonwebtoken";
 import Author from "../models/author.model.js";
 import passport from "passport";
-import {
-  authMiddleware,
-  generateJWT,
-} from "../middlewares/authenticateToken.js";
+import { authMiddleware } from "../middlewares/authenticateToken.js";
 
 export const authRouter = Router();
 
@@ -30,6 +27,7 @@ authRouter.post("/login", async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "3d" }
     );
+    console.log("Generated JWT token for login:", token);
     res.json({ token: token });
   } catch (error) {
     console.error("Login error:", error);
@@ -43,9 +41,7 @@ authRouter.get("/me", authMiddleware, (req, res) => {
 
 authRouter.get(
   "/google",
-  passport.authenticate("google", {
-    scope: ["profile", "email"],
-  })
+  passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
 authRouter.get(
@@ -55,8 +51,8 @@ authRouter.get(
     session: false,
   }),
   (req, res) => {
-    // 토큰을 클라이언트로 리디렉션하는 로직
     const token = req.user.token;
+    console.log("JWT token after Google login:", token);
     res.redirect(`http://localhost:3000/login-success?token=${token}`);
   }
 );

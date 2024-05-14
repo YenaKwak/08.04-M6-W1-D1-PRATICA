@@ -9,11 +9,13 @@ const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  // URL에서 토큰 추출 및 처리
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get("token");
+    console.log("Login component: Token from URL:", token); // 로그 추가
     if (token) {
+      console.log("Login component: Storing token to localStorage:", token); // 로그 추가
+      localStorage.setItem("accessToken", token);
       login(token);
       navigate("/", { replace: true });
     }
@@ -32,6 +34,7 @@ const Login = () => {
 
       const data = await response.json();
       if (data.token) {
+        console.log("Login component: Token from login:", data.token); // 로그 추가
         login(data.token);
         localStorage.setItem("accessToken", data.token); // Store token locally
         alert("Login success");
@@ -46,6 +49,7 @@ const Login = () => {
   };
 
   const handleGoogleLogin = () => {
+    console.log("Login component: Redirecting to Google login"); // 로그 추가
     window.location.href = "http://localhost:3002/api/auth/google";
   };
 

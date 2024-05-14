@@ -13,6 +13,7 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
+        console.log("Google profile:", profile);
         let author = await Author.findOne({ googleId: profile.id });
         if (!author) {
           author = new Author({
@@ -27,10 +28,12 @@ passport.use(
         const token = jwt.sign(
           { authorId: author._id },
           process.env.JWT_SECRET,
-          { expiresIn: "1d" }
+          { expiresIn: "3d" }
         );
+        console.log("Generated JWT token:", token);
         done(null, { author, token });
       } catch (error) {
+        console.error("Error in GoogleStrategy:", error);
         done(error, null);
       }
     }
