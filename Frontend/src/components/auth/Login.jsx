@@ -90,6 +90,7 @@ const Login = () => {
           type="button"
           onClick={handleGoogleLogin}
           className="btn btn-danger"
+          style={{ marginLeft: "10px" }}
         >
           Login with Google
         </button>

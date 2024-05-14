@@ -35,6 +35,8 @@ function App() {
             element={<PrivateRoute component={EditBlogPost} />}
           />
           <Route path="*" element={<NotFound />} />
+          <Route path="/login-success" element={<Login />} />{" "}
+          {/* 추가된 경로 */}
         </Routes>
         <Footer />
       </AuthProvider>
@@ -43,7 +45,8 @@ function App() {
 }
 
 function PrivateRoute({ component: Component }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth(); // AuthContext에서 로그인 상태를 가져옵니다.
+
   return isAuthenticated ? <Component /> : <Navigate to="/login" />;
 }
 
